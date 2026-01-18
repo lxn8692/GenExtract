@@ -1,0 +1,62 @@
+[
+    {
+        "artifactexistence.damagedestroy.damage": "Generate an event. Given the event type: 'artifactexistence.damagedestroy.damage' and the following roles: damager, artifact, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "artifactexistence.damagedestroy.destroy": "Generate an event. Given the event type: 'artifactexistence.damagedestroy.destroy' and the following roles: destroyer, artifact, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "artifactexistence.damagedestroy.n/a": "Generate an event. Given the event type: 'artifactexistence.damagedestroy.n/a' and the following roles: damagerdestroyer, artifact, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "disaster.accidentcrash.accidentcrash": "Generate an event. Given the event type: 'disaster.accidentcrash.accidentcrash' and the following roles: driverpassenger, vehicle, crashobject, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "disaster.fireexplosion.fireexplosion": "Generate an event. Given the event type: 'disaster.fireexplosion.fireexplosion' and the following roles: fireexplosionobject, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "inspection.sensoryobserve.inspectpeopleorganization": "Generate an event. Given the event type: 'inspection.sensoryobserve.inspectpeopleorganization' and the following roles: inspector, inspectedentity, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "inspection.sensoryobserve.monitorelection": "Generate an event. Given the event type: 'inspection.sensoryobserve.monitorelection' and the following roles: monitor, monitoredentity, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "inspection.sensoryobserve.n/a": "Generate an event. Given the event type: 'inspection.sensoryobserve.n/a' and the following roles: observer, observedentity, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "inspection.sensoryobserve.physicalinvestigateinspect": "Generate an event. Given the event type: 'inspection.sensoryobserve.physicalinvestigateinspect' and the following roles: inspector, inspectedentity, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "manufacture.artifact.build": "Generate an event. Given the event type: 'manufacture.artifact.build' and the following roles: manufacturer, artifact, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "manufacture.artifact.createintellectualproperty": "Generate an event. Given the event type: 'manufacture.artifact.createintellectualproperty' and the following roles: manufacturer, artifact, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "manufacture.artifact.createmanufacture": "Generate an event. Given the event type: 'manufacture.artifact.createmanufacture' and the following roles: manufacturer, artifact, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "manufacture.artifact.n/a": "Generate an event. Given the event type: 'manufacture.artifact.n/a' and the following roles: manufacturer, artifact, instrument, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "personnel.elect.n/a": "Generate an event. Given the event type: 'personnel.elect.n/a' and the following roles: voter, candidate, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "personnel.elect.winelection": "Generate an event. Given the event type: 'personnel.elect.winelection' and the following roles: voter, candidate, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "personnel.endposition.firinglayoff": "Generate an event. Given the event type: 'personnel.endposition.firinglayoff' and the following roles: employee, placeofemployment, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "personnel.endposition.n/a": "Generate an event. Given the event type: 'personnel.endposition.n/a' and the following roles: employee, placeofemployment, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "personnel.endposition.quitretire": "Generate an event. Given the event type: 'personnel.endposition.quitretire' and the following roles: employee, placeofemployment, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "personnel.startposition.hiring": "Generate an event. Given the event type: 'personnel.startposition.hiring' and the following roles: employee, placeofemployment, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "personnel.startposition.n/a": "Generate an event. Given the event type: 'personnel.startposition.n/a' and the following roles: employee, placeofemployment, place, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    }
+]

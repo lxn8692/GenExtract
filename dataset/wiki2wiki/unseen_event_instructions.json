@@ -1,0 +1,35 @@
+[
+    {
+        "Cognitive.IdentifyCategorize.Unspecified": "Generate an event. Given the event type: 'Cognitive.IdentifyCategorize.Unspecified' and the following roles: place, identifiedrole, identifiedobject, identifier, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Cognitive.Inspection.SensoryObserve": "Generate an event. Given the event type: 'Cognitive.Inspection.SensoryObserve' and the following roles: place, instrument, observer, observedentity, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Control.ImpedeInterfereWith.Unspecified": "Generate an event. Given the event type: 'Control.ImpedeInterfereWith.Unspecified' and the following roles: place, impeder, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "GenericCrime.GenericCrime.GenericCrime": "Generate an event. Given the event type: 'GenericCrime.GenericCrime.GenericCrime' and the following roles: place, perpetrator, victim, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Movement.Transportation.Unspecified": "Generate an event. Given the event type: 'Movement.Transportation.Unspecified' and the following roles: destination, transporter, origin, vehicle, passengerartifact, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Medical.Intervention.Unspecified": "Generate an event. Given the event type: 'Medical.Intervention.Unspecified' and the following roles: place, patient, treater, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Movement.Transportation.Evacuation": "Generate an event. Given the event type: 'Movement.Transportation.Evacuation' and the following roles: passengerartifact, transporter, destination, origin, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Movement.Transportation.PreventPassage": "Generate an event. Given the event type: 'Movement.Transportation.PreventPassage' and the following roles: destination, preventer, transporter, origin, vehicle, passengerartifact, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Cognitive.Research.Unspecified": "Generate an event. Given the event type: 'Cognitive.Research.Unspecified' and the following roles: place, researcher, subject, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Movement.Transportation.IllegalTransportation": "Generate an event. Given the event type: 'Movement.Transportation.IllegalTransportation' and the following roles: passengerartifact, destination, transporter, vehicle, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    },
+    {
+        "Cognitive.TeachingTrainingLearning.Unspecified": "Generate an event. Given the event type: 'Cognitive.TeachingTrainingLearning.Unspecified' and the following roles: teachertrainer, learner, please generate a coherent context that includes the event trigger and the role-argument pairs. Make sure the event trigger and each argument for the corresponding role appear clearly in the context, and the context reflects the relationship between the trigger and its arguments."
+    }
+]
