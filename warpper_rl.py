@@ -373,7 +373,7 @@ if __name__ == "__main__":
     parser.add_argument("--pseudo-empty-threshold",default= 2, type=float)
  
     args = parser.parse_args()
-    #rams2rams
+
     set_seed(args.seed)
     hf_set_seed(args.seed)
     main_dual(path_train=args.path_train,
@@ -393,74 +393,5 @@ if __name__ == "__main__":
             Sampling_cfg = {'pseudo_empty_ratio':  args.pseudo_empty_ratio,
                             "pseudo_empty_threshold": args.pseudo_empty_threshold})
 
-
-
-    #  # llama
-    # Sampling_cfg_wiki2wiki_llama ={'pseudo_empty_ratio':  0.1,
-    #                          "pseudo_empty_threshold": 1,
-    #                          'train_empty_ratio': 1,
-    #                          'train_empty_threshold':2}
-    # #qwen
-    # Sampling_cfg_wiki2wiki_qwen ={'pseudo_empty_ratio':  0.1,
-    #                          "pseudo_empty_threshold": 2,
-    #                          'train_empty_ratio': 1,
-    #                         'train_empty_threshold':2}
-
-    # main_dual(path_train='/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wiki2wiki/train.jsonl',
-    #         path_dev = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wiki2wiki/dev.jsonl',
-    #         path_test = "/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wiki2wiki/test.jsonl",
-    #         task_name = 'wiki2wiki',
-    #         meta_path = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wikievents/meta.json',
-    #         unseen_meta = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wiki2wiki/wiki2wiki_unseen_meta.json',
-    #         ontology_dict_path='/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wiki.csv',
-    #         ontology_test_dict_path = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wiki.csv',
-    #         generator_unseen_label_path = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/wiki2wiki/generator_unseen_label_wiki2wiki.json',
-    #         save_dir = 'experiments/wiki2wiki/output_llama_seed_42',
-    #         with_train = True,
-    #         num_iter= 5,
-    #         score_only_ext = False,
-    #         by_rel = False,
-    #         rl_version = "all",
-    #         rescale_train = False,
-    #         num_gen_per_label = 50,
-    #         gen_PLM_Path = 'llama',
-    #         Sampling_cfg = Sampling_cfg_wiki2wiki_llama)
-   
-   
-
-    # Sampling_cfg_rams2wiki_qwen ={'pseudo_empty_ratio':  0.5,
-    #                          "pseudo_empty_threshold": 1,
-    #                          'train_empty_ratio': 0.1,
-    #                          'train_empty_threshold':2}
-    
-    # #   训练集： 所有论元数大于2 的+50 %论元小于1
-    # #   伪数据 所有论元数大于2 的+50 %论元小于2
-    
-    # Sampling_cfg_rams2wiki_llama ={'pseudo_empty_ratio':  0.5,
-    #                         "pseudo_empty_threshold": 1,
-    #                         'train_empty_ratio': 0.1,
-    #                         'train_empty_threshold':2}
-
- 
-
-    # main_dual(path_train='/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/train.jsonl',
-    #         path_dev = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/dev.jsonl',
-    #         path_test = "/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/test.jsonl",
-    #         task_name = 'rams2wiki',
-    #         meta_path = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/merged_meta.json',
-    #         unseen_meta = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/rams2wiki_meta.json',
-    #         ontology_dict_path='/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/merged_ontology.csv',
-    #         ontology_test_dict_path = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/merged_ontology.csv',
-    #         generator_unseen_label_path = '/root/siton-data-Hzhang/ZGJ/2025/llm_zero_eae/data/rams2wiki/generator_unseen_label_rams2wiki.json',
-    #         save_dir = 'experiments/rams2wiki/output_llama_seed_42',
-    #         with_train = True,
-    #         num_iter= 5,
-    #         score_only_ext = False,
-    #         by_rel = False,
-    #         rl_version = "all",
-    #         rescale_train = False,
-    #         num_gen_per_label = 500,
-    #         gen_PLM_Path = 'llama',
-    #         Sampling_cfg=Sampling_cfg_rams2wiki_llama)
 
   
