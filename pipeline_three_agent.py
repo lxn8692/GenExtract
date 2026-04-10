@@ -508,17 +508,13 @@ def main_four_agent(
         revisor.estimate(path_revised, path_revised,
                          path_train, task_name=task_name, meta_path=meta_path)
 
-        # Step 7: Verifier validates revised results
+        # Step 7: Verifier validates revised results (ontology + consistency + LLM)
         path_verified = str(Path(save_dir) / "synthetic" / f"{i}_verified.jsonl")
         print(f"  Step 7: Verifier validating results...")
         verifier.verify(path_revised, path_verified)
 
-        # Step 8: Verifier estimates verification quality (rule-based)
-        print(f"  Step 8: Verifier estimating verification quality...")
-        verifier.estimate(path_verified, path_verified)
-
-        # Step 9: Filter data using combined four-agent reward
-        print(f"  Step 9: Filtering data with four-agent reward...")
+        # Step 8: Filter data using combined four-agent reward
+        print(f"  Step 8: Filtering data with four-agent reward...")
         path_filtered = str(Path(save_dir) / "filtered" / f"{i}.jsonl")
         filter_data_four_agent(
             path_pseudo=path_verified,

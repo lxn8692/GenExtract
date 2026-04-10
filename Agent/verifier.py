@@ -29,19 +29,15 @@ Output: Verification scores + constraint violation flags
 
 import json
 import random
-import math
 import re
 import numpy as np
-from collections import defaultdict
 from pathlib import Path
-from typing import List, Optional, Dict, Tuple, Set
+from typing import Optional, Dict
 
 import torch
-import pandas as pd
-from torch.nn import CrossEntropyLoss
 from pydantic.main import BaseModel
 from tqdm import tqdm
-from peft import PeftModel, LoraConfig, TaskType
+from peft import PeftModel
 from transformers import AutoTokenizer
 
 from modeling_rl import BaseEAEModel, select_model
@@ -740,7 +736,7 @@ class Verifier(BaseModel):
 
         for ins in data_in:
             if ins.get('verification_score') is not None:
-                return
+                continue
 
             context = ins['Context']
             event_type = ins['Event type']
