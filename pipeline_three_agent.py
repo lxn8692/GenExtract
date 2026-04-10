@@ -1,34 +1,37 @@
 """
-Three-Agent Event Extraction Pipeline: Detector + Extractor + Revisor
+Four-Agent Event Extraction Pipeline: Detector + Extractor + Revisor + Verifier
 
 This pipeline implements a multi-agent iterative training framework for
-document-level event argument extraction. Three agents collaborate:
+document-level event argument extraction. Four agents collaborate:
 
     Detector  (BART):       Detects event triggers and classifies event types
     Extractor (BART):       Extracts event arguments via template filling
     Revisor   (LLM+LoRA):   Reviews and revises extraction results
+    Verifier  (LLM+LoRA):   Validates results against knowledge & ontology
 
 Training Loop:
     Phase 1 (Initialization):
-        - Train all three agents on labeled training data
+        - Train all agents on labeled training data
 
     Phase 2 (Iterative Refinement):
         For each iteration:
-        1. Detector  detects triggers from raw documents
-        2. Extractor extracts arguments given detected triggers
-        3. Revisor   reviews and revises extraction results
-        4. All three agents estimate quality scores:
+        1. Generator produces synthetic event data
+        2. All agents estimate quality scores:
            - Detector:  detection NLL
            - Extractor: extraction NLL
            - Revisor:   revision penalty + consistency check
+           - Verifier:  ontology + cross-argument + knowledge penalty
+        3. Revisor reviews and revises extraction results
+        4. Verifier validates results against knowledge constraints
         5. Combine scores into unified reward → filter high-quality data
-        6. Retrain all three agents on filtered data
+        6. Retrain all agents on filtered data
 
 Reward Computation:
     reward = normalize(
         w1 * extractor_nll +
         w2 * detector_nll +
         w3 * revision_penalty +
+        w4 * verification_score +
         generator_none_penalty
     )
 
@@ -60,6 +63,7 @@ import pandas as pd
 from Agent.detector import Detector
 from Agent.extractor import Extractor
 from Agent.revisor import Revisor
+from Agent.verifier import Verifier
 from Agent.generator import Generator
 
 from Dataset import Dataset
@@ -69,15 +73,16 @@ from Dataset import Dataset
 # Reward & Data Filtering
 # ---------------------------------------------------------------------------
 
-def compute_three_agent_reward(data: list) -> dict:
+def compute_four_agent_reward(data: list) -> dict:
     """
-    Compute unified reward scores from all three agents' quality signals.
+    Compute unified reward scores from all four agents' quality signals.
 
     Combines:
-        - extractor_nll:     Extractor's confidence in the extraction
-        - detector_nll:      Detector's confidence in trigger detection
-        - revision_penalty:  Revisor's consistency/quality penalty
-        - penalty:           Generator's none-ratio penalty
+        - extractor_nll:      Extractor's confidence in the extraction
+        - detector_nll:       Detector's confidence in trigger detection
+        - revision_penalty:   Revisor's consistency/quality penalty
+        - verification_score: Verifier's knowledge/ontology penalty
+        - penalty:            Generator's none-ratio penalty
 
     Each signal is z-score normalized, then combined with equal weights.
     The final reward is min-max scaled to [0, 1].
@@ -97,6 +102,7 @@ def compute_three_agent_reward(data: list) -> dict:
     ext_list = []
     det_list = []
     rev_list = []
+    ver_list = []
     gen_list = []
 
     for k in groups:
@@ -104,11 +110,13 @@ def compute_three_agent_reward(data: list) -> dict:
             ext_list.append(tri.get('extractor_nll', 0))
             det_list.append(tri.get('detector_nll', 0))
             rev_list.append(tri.get('revision_penalty', 0))
+            ver_list.append(tri.get('verification_score', 0))
             gen_list.append(tri.get('cond_generator_nll', 0))
 
     ext_mean, ext_std = np.mean(ext_list), np.std(ext_list)
     det_mean, det_std = np.mean(det_list), np.std(det_list)
     rev_mean, rev_std = np.mean(rev_list), np.std(rev_list)
+    ver_mean, ver_std = np.mean(ver_list), np.std(ver_list)
     gen_mean, gen_std = np.mean(gen_list), np.std(gen_list)
 
     def z_score(x, mean, std):
@@ -120,6 +128,7 @@ def compute_three_agent_reward(data: list) -> dict:
             z_score(x.get('extractor_nll', 0), ext_mean, ext_std) +
             z_score(x.get('detector_nll', 0), det_mean, det_std) +
             z_score(x.get('revision_penalty', 0), rev_mean, rev_std) +
+            z_score(x.get('verification_score', 0), ver_mean, ver_std) +
             z_score(x.get('cond_generator_nll', 0), gen_mean, gen_std) +
             x.get('penalty', 0)
         )
@@ -143,21 +152,21 @@ def compute_three_agent_reward(data: list) -> dict:
     return groups
 
 
-def filter_data_three_agent(path_pseudo: str,
-                            path_train: str,
-                            path_out: str,
-                            total_pseudo_per_label: int,
-                            pseudo_ratio: float,
-                            task_name: str,
-                            unseen_meta_path: str,
-                            meta_path: str,
-                            sampling_cfg: dict):
+def filter_data_four_agent(path_pseudo: str,
+                           path_train: str,
+                           path_out: str,
+                           total_pseudo_per_label: int,
+                           pseudo_ratio: float,
+                           task_name: str,
+                           unseen_meta_path: str,
+                           meta_path: str,
+                           sampling_cfg: dict):
     """
     Filter and merge synthetic data with training data based on
-    three-agent reward scores.
+    four-agent reward scores.
 
     The filtering strategy:
-        1. Rank all synthetic data by combined three-agent reward
+        1. Rank all synthetic data by combined four-agent reward
         2. Select top-k instances (based on pseudo_ratio schedule)
         3. Balance non-empty and empty argument instances
         4. Ensure minimum representation per event type
@@ -174,7 +183,7 @@ def filter_data_three_agent(path_pseudo: str,
         meta_path:              Path to seen event types meta
         sampling_cfg:           Sampling configuration dict
     """
-    print(dict(filter_data_three_agent=locals()))
+    print(dict(filter_data_four_agent=locals()))
     if Path(path_out).exists():
         return
 
@@ -189,9 +198,9 @@ def filter_data_three_agent(path_pseudo: str,
     num_pseudo = int(total_pseudo_per_label * pseudo_ratio * len(pseudo_labels))
     num_pseudo_per_label = int(num_pseudo / len(pseudo_labels))
 
-    # Score and sort using three-agent reward
-    pseudo_data = compute_three_agent_reward(pseudo_data)
-    train_data = compute_three_agent_reward(train_data)
+    # Score and sort using four-agent reward
+    pseudo_data = compute_four_agent_reward(pseudo_data)
+    train_data = compute_four_agent_reward(train_data)
 
     nb_rel_train_data = [x for k, v in train_data.items() for x in v]
     nb_rel_pseudo_data = [x for k, v in pseudo_data.items() for x in v]
@@ -349,7 +358,7 @@ def run_eval(path_model: str, path_test: str, mode: str, is_eval: bool,
 # Main Pipeline
 # ---------------------------------------------------------------------------
 
-def main_three_agent(
+def main_four_agent(
     path_train: str,
     path_dev: str,
     path_test: str,
@@ -368,16 +377,18 @@ def main_three_agent(
     gen_PLM_path: str = 'GPT2',
     ext_PLM_path: str = 'Bart-large',
     rev_PLM_path: str = 'Meta-Llama-3-8B',
+    ver_PLM_path: str = 'Meta-Llama-3-8B',
     sampling_cfg: dict = None,
 ):
     """
-    Main three-agent training pipeline.
+    Main four-agent training pipeline.
 
     Architecture:
         Generator (LLM+LoRA):  Generates synthetic event data
         Detector  (BART):      Detects triggers and event types
         Extractor (BART):      Extracts arguments via template filling
         Revisor   (LLM+LoRA):  Reviews and revises extraction results
+        Verifier  (LLM+LoRA):  Validates results against knowledge & ontology
 
     The pipeline runs in two phases:
         Phase 1: Initial training of all agents on labeled data
@@ -387,8 +398,8 @@ def main_three_agent(
         sampling_cfg = {}
 
     print("=" * 70)
-    print("Three-Agent Event Extraction Pipeline")
-    print("  Agents: Generator + Detector + Extractor + Revisor")
+    print("Four-Agent Event Extraction Pipeline")
+    print("  Agents: Generator + Detector + Extractor + Revisor + Verifier")
     print("=" * 70)
     print(dict(main=locals()))
 
@@ -424,6 +435,12 @@ def main_three_agent(
         save_dir=str(Path(save_dir) / "revisor/iter0"),
     )
 
+    # Verifier: validates results against knowledge constraints
+    verifier = Verifier(
+        load_dir=ver_PLM_path,
+        save_dir=str(Path(save_dir) / "verifier/iter0"),
+    )
+
     # Train all agents on initial data
     print("  Training Generator...")
     generator.fit(path_train, path_dev, task_train_data, meta_path, iter=0)
@@ -438,6 +455,9 @@ def main_three_agent(
 
     print("  Training Revisor...")
     revisor.fit(path_train, path_dev, task_train_data, meta_path, iter=0)
+
+    print("  Training Verifier...")
+    verifier.fit(path_train, path_dev, task_train_data, meta_path, iter=0)
 
     # Evaluate initial Extractor
     print("  Evaluating initial Extractor...")
@@ -488,11 +508,16 @@ def main_three_agent(
         revisor.estimate(path_revised, path_revised,
                          path_train, task_name=task_name, meta_path=meta_path)
 
-        # Step 7: Filter data using combined three-agent reward
-        print(f"  Step 7: Filtering data with three-agent reward...")
+        # Step 7: Verifier validates revised results (ontology + consistency + LLM)
+        path_verified = str(Path(save_dir) / "synthetic" / f"{i}_verified.jsonl")
+        print(f"  Step 7: Verifier validating results...")
+        verifier.verify(path_revised, path_verified)
+
+        # Step 8: Filter data using combined four-agent reward
+        print(f"  Step 8: Filtering data with four-agent reward...")
         path_filtered = str(Path(save_dir) / "filtered" / f"{i}.jsonl")
-        filter_data_three_agent(
-            path_pseudo=path_revised,
+        filter_data_four_agent(
+            path_pseudo=path_verified,
             path_train=path_train,
             path_out=path_filtered,
             total_pseudo_per_label=num_gen_per_label,
@@ -503,8 +528,8 @@ def main_three_agent(
             sampling_cfg=sampling_cfg
         )
 
-        # Step 8: Retrain all agents on filtered data
-        print(f"  Step 8: Retraining all agents...")
+        # Step 10: Retrain all agents on filtered data
+        print(f"  Step 10: Retraining all agents...")
 
         # Re-initialize agents for next iteration
         extractor = Extractor(
@@ -531,6 +556,12 @@ def main_three_agent(
             save_dir=str(Path(save_dir) / "revisor" / f'iter{i + 1}'),
         )
 
+        verifier = Verifier(
+            load_dir=ver_PLM_path,
+            lora_dir=str(Path(save_dir) / "verifier" / f'iter{i}' / "model"),
+            save_dir=str(Path(save_dir) / "verifier" / f'iter{i + 1}'),
+        )
+
         # Train all agents
         print(f"    Training Extractor iter{i + 1}...")
         extractor.fit(path_filtered, path_dev, task_train_data, meta_path,
@@ -548,6 +579,10 @@ def main_three_agent(
         revisor.fit(path_filtered, path_dev, task_train_data, meta_path,
                     iter=i + 1)
 
+        print(f"    Training Verifier iter{i + 1}...")
+        verifier.fit(path_filtered, path_dev, task_train_data, meta_path,
+                     iter=i + 1)
+
         # Evaluate
         print(f"    Evaluating Extractor iter{i + 1}...")
         run_eval(
@@ -559,7 +594,7 @@ def main_three_agent(
         )
 
     print(f"\n{'=' * 70}")
-    print("Three-Agent Pipeline Complete!")
+    print("Four-Agent Pipeline Complete!")
     print(f"{'=' * 70}")
 
 
@@ -603,7 +638,7 @@ def set_seed(seed=42):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Three-Agent (Detector+Extractor+Revisor) Event Extraction Pipeline"
+        description="Four-Agent (Detector+Extractor+Revisor+Verifier) Event Extraction Pipeline"
     )
 
     # Data paths
@@ -628,7 +663,7 @@ if __name__ == "__main__":
                         help="Path to generator unseen label prompts")
 
     # Output and training
-    parser.add_argument("--save-dir", default="experiments/three_agent/output",
+    parser.add_argument("--save-dir", default="experiments/four_agent/output",
                         help="Directory to save all models and outputs")
     parser.add_argument("--seed", default=42, type=int,
                         help="Random seed for reproducibility")
@@ -645,6 +680,8 @@ if __name__ == "__main__":
                         help="Path to Extractor/Detector base model (BART)")
     parser.add_argument("--rev-plm-path", default="Meta-Llama-3-8B",
                         help="Path to Revisor base LLM")
+    parser.add_argument("--ver-plm-path", default="Meta-Llama-3-8B",
+                        help="Path to Verifier base LLM")
 
     # Generation config
     parser.add_argument("--num-gen-per-label", type=int, default=100,
@@ -663,7 +700,7 @@ if __name__ == "__main__":
     set_seed(args.seed)
     hf_set_seed(args.seed)
 
-    main_three_agent(
+    main_four_agent(
         path_train=args.path_train,
         path_dev=args.path_dev,
         path_test=args.path_test,
@@ -679,6 +716,7 @@ if __name__ == "__main__":
         gen_PLM_path=args.gen_plm_path,
         ext_PLM_path=args.ext_plm_path,
         rev_PLM_path=args.rev_plm_path,
+        ver_PLM_path=args.ver_plm_path,
         sampling_cfg={
             'pseudo_empty_ratio': args.pseudo_empty_ratio,
             'pseudo_empty_threshold': args.pseudo_empty_threshold
