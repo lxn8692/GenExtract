@@ -1,21 +1,22 @@
 #!/bin/bash
 # ============================================================================
-# Three-Agent Event Extraction Pipeline
-# Detector + Extractor + Revisor
+# Four-Agent Event Extraction Pipeline
+# Detector + Extractor + Revisor + Verifier
 #
 # Usage:
 #   bash run_three_agent.sh
 #
-# This script runs the three-agent pipeline on the RAMS dataset.
+# This script runs the four-agent pipeline on the RAMS dataset.
 # Modify the paths below to match your environment.
 # ============================================================================
 
 set -e
 
 # --- Model paths (modify these to match your environment) ---
-GEN_PLM_PATH="Meta-Llama-3-8B"          # Generator & default Revisor LLM
+GEN_PLM_PATH="Meta-Llama-3-8B"          # Generator LLM
 EXT_PLM_PATH="facebook/bart-large"       # Detector & Extractor base model
-REV_PLM_PATH="Meta-Llama-3-8B"          # Revisor LLM (can be different from Generator)
+REV_PLM_PATH="Meta-Llama-3-8B"          # Revisor LLM
+VER_PLM_PATH="Meta-Llama-3-8B"          # Verifier LLM (knowledge validation)
 
 # --- Dataset: RAMS → RAMS ---
 TASK_NAME="rams2rams"
@@ -26,7 +27,7 @@ SEEN_META="dataset/rams2rams/meta_seen.json"
 UNSEEN_META="dataset/rams2rams/meta_unseen.json"
 ONTOLOGY="dataset/rams2rams/ontology.csv"
 UNSEEN_LABELS="data/rams2rams/generator_unseen_label_rams2rams_code.json"
-SAVE_DIR="experiments/three_agent/${TASK_NAME}"
+SAVE_DIR="experiments/four_agent/${TASK_NAME}"
 
 # --- Training config ---
 SEED=42
@@ -37,7 +38,7 @@ PSEUDO_EMPTY_RATIO=0.1
 PSEUDO_EMPTY_THRESHOLD=2
 
 echo "=============================================="
-echo "  Three-Agent Event Extraction Pipeline"
+echo "  Four-Agent Event Extraction Pipeline"
 echo "  Task: ${TASK_NAME}"
 echo "  Iterations: ${NUM_ITER}"
 echo "  Save dir: ${SAVE_DIR}"
@@ -59,6 +60,7 @@ python pipeline_three_agent.py \
     --gen-plm-path "${GEN_PLM_PATH}" \
     --ext-plm-path "${EXT_PLM_PATH}" \
     --rev-plm-path "${REV_PLM_PATH}" \
+    --ver-plm-path "${VER_PLM_PATH}" \
     --num-gen-per-label ${NUM_GEN} \
     --block-size ${BLOCK_SIZE} \
     --pseudo-empty-ratio ${PSEUDO_EMPTY_RATIO} \
